@@ -1,0 +1,89 @@
+%%%
+% Cody Hanks 
+% 6/7/2016  
+% Step 1 Use Data minute 1 to get the Coeff and get the Explained Values 
+%
+%%%
+clc 
+clear
+close all;
+
+subjects =21;
+datalength = 10;
+lines = 8;
+plt = 0;
+
+%load minute 1 data 
+load('DataSheet3.mat');
+
+%creat the row starts for each subject 
+rows = 1:datalength:(subjects*datalength);
+
+
+%Get the Dataset for Training ... uses only rows 2-10 for each of 21
+%subjects 
+Datasheet2 = zeros(subjects*lines,32);
+for subject = 1:subjects
+    Datasheet2(((subject-1)*lines)+1:(subject*lines),1:32) ...
+    = DataSheet(rows(subject)+2:rows(subject)+datalength-1,1:32);
+end
+save('minute1.mat','Datasheet2');
+
+
+
+% run PCA on the on the Data minute 1 
+[coeff,score,latent,tsquared,explained,mu] = pca(DataSheet(1:subjects*lines,4:24));
+DataSheet(1:subjects*lines,4:24)=score;
+save('pcadatamin1.mat','mu','coeff','explained','score');
+
+endpoint=0;
+%get the 90% line 
+for count = 1:length(explained(:))
+    if sum(explained(1:count)) >90 
+        endpoint = count;
+        break;
+    end
+end
+save('endpoint.mat','endpoint');
+
+% plot the line 
+if plt
+    plot(1:length(explained(:)),explained,'g');
+    hold on;
+    plot(endpoint,explained(endpoint),'rx');
+end
+
+%show explained 
+disp(explained(1:endpoint));
+disp(sum(explained(1:endpoint)));
+
+
+% ok now add the plots for leave one out 
+for subject = 1:subjects
+    TempDataset = Datasheet2(~ismember(1:subjects*lines,[((subject-1)*lines)+1:(subject*lines)]),:);
+    [tcoeff,tscore,tlatent,ttsquared,texplained,tmu]=pca(TempDataset(:,4:24));
+    
+    tendpoint=0;
+    %get the 90% line 
+    for count = 1:length(texplained(:))
+        if sum(texplained(1:count)) >90 
+            tendpoint = count;
+            break;
+        end
+    end
+    if plt
+    hold on;
+    plot(1:length(texplained(:)),texplained,'b');
+    hold on;
+    plot(tendpoint,texplained(tendpoint),'r+');
+    end
+    clear TempDataset tcoeff tscore tlatent ttsquared texplained tmu tendpoint
+end
+
+
+step2_par
+
+
+
+
+

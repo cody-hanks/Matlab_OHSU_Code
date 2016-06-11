@@ -1,0 +1,56 @@
+%%%
+% Cody Hanks 
+% 6/7/2016  
+% Step 4 use determined features and determined kernel/box along with coeff
+% from step 1 to apply to data minute 2 then test  for accuracy 
+%
+%
+%%%
+clc 
+clear
+close all;
+
+subjects =21;
+datalength = 10;
+lines = 8;
+plt = 0;
+
+%load minute 2 data 
+load('DataSheet4.mat');
+
+%creat the row starts for each subject 
+rows = 1:datalength:(subjects*datalength);
+
+
+%Get the Dataset for Testing
+Datasheet_tst = zeros(subjects*lines,32);
+for subject = 1:subjects
+    Datasheet_tst(((subject-1)*lines)+1:(subject*lines),1:32) ...
+    = DataSheet(rows(subject)+2:rows(subject)+datalength-1,1:32);
+end
+save('minute2.mat','Datasheet_tst');
+
+clear
+tic
+% load the Data 
+load('minute1.mat');% Datasheet2
+load('minute2.mat');% Datasheet_tst
+load('Parameterslv1.mat');% box1 kern1
+load('Parameterslv2.mat');% box2 kern2
+load('Parameterslv3.mat');% box3 kern3
+load('feat1.mat'); % mx1 Max % number of features
+load('feat2.mat'); % mx2
+load('feat3.mat'); % mx3
+load('pcadatamin1.mat'); % 'mu','coeff','explained','score'
+
+Datasheet_tst(:,4:24) = 
+
+
+
+
+
+
+
+
+
+
